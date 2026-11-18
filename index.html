@@ -484,6 +484,8 @@ function relatedList(p){
  const out=[];const seen=new Set([p.c]);const add=q=>{if(!seen.has(q.c)){seen.add(q.c);out.push(q)}};
  // 実績(スマイル売上明細の集計)で、よく一緒に買われる商品を先頭に
  ((typeof CO!=='undefined'&&CO[p.c])||[]).forEach(c=>{if(byCode[c])add(byCode[c])});
+ // 社内資料(受注商品ポイントリスト)で「一緒に注文される」とされた商品
+ (p.al||[]).forEach(c=>{if(byCode[c])add(byCode[c])});
  // ナット・ワッシャー → 同じシリーズのボルト
  const m=p.n.match(/^(ステン|ユニクロ|クロメート|三価クロメート|生地|Z)\s(.*)$/);
  if(m&&/(ナット|ワッシャー|座金)/.test(m[2]))PRODUCTS.forEach(q=>{if(q.n.startsWith(m[1]+' ')&&/ボルト/.test(q.n)&&!/アンカー|フック|クリッパー/.test(q.n))add(q)});
@@ -512,6 +514,8 @@ function openDetail(code){
    ${p.u?`<dt>おもな用途</dt><dd class="use">${esc(p.u)}</dd>`:''}
    ${p.m?`<dt>材質</dt><dd>${esc(p.m)}</dd>`:''}
    <dt>分類</dt><dd>${esc(p.g)} › ${esc(p.h)}</dd>
+   ${S.mode==='staff'&&p.loc&&p.loc.length?`<dt>置き場所</dt><dd>${esc(p.loc.join(' / '))}</dd>`:''}
+   ${S.mode==='staff'&&p.st&&p.st.length?`<dt>社内メモ</dt><dd class="stmemo">${p.st.map(t=>esc(t)).join('<br>')}<small style="color:var(--sub);display:block">※社員モードだけに表示(お客様には出ません)</small></dd>`:''}
    ${S.mode==='staff'?`<dt>商品コード</dt><dd>${p.c}</dd><dt>スマイル登録名</dt><dd>${esc(p.s||p.n)}<small style="color:var(--sub)"> (メールに表示される名前)</small></dd>`:''}
   </dl>
   ${fig(p)}
