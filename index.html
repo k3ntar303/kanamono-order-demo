@@ -183,6 +183,35 @@ table.h{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--
 table.h th,table.h td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
 table.h th{background:var(--steel-2)}
 .empty{text-align:center;color:var(--sub);padding:30px 0}
+/* スマホ縦持ち:ヘッダーを2段にして画面に収める */
+@media(max-width:640px){
+ html,body{overflow-x:hidden}
+ .demo-bar{gap:5px;padding:5px 6px;font-size:11px;justify-content:flex-start}
+ .demo-bar b{width:100%;font-size:11px}
+ .demo-bar button{padding:4px 9px;font-size:11px}
+ .top-in{flex-wrap:wrap;gap:6px 8px;padding:7px 10px}
+ .logo{order:1;flex:1 1 0;min-width:0;font-size:14px;gap:7px;white-space:normal}
+ .logo i{width:32px;height:32px;font-size:16px;flex:none}
+ .logo small{font-size:10px}
+ #acct{order:2;padding:7px 9px;font-size:12px;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
+ .cartbtn{order:3;padding:7px 10px;font-size:13px;margin-right:6px}
+ .search{order:4;flex:1 1 100%}
+ .search input{padding:10px 12px 10px 36px;font-size:16px}
+ main{padding:12px 10px 120px}
+ .hero{padding:14px;gap:10px;border-radius:14px}
+ .hero h2{font-size:18px}
+ .hero p{font-size:13px}
+ .steps{margin-left:0;gap:6px;width:100%;display:grid;grid-template-columns:1fr 1fr}
+ .steps span{padding:5px 8px;font-size:12px;text-align:center}
+ .groups{gap:10px}
+ h1.t{font-size:20px}
+ .pgrid{grid-template-columns:1fr;gap:10px}
+ .prod{flex-direction:row}
+ .prod .pic{flex:0 0 36%;aspect-ratio:auto;min-height:130px}
+ .prod .body{min-width:0;flex:1}
+ .prod .foot{flex-wrap:wrap}
+}
+@media(max-width:640px){.cartbar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}.cartbar-in{gap:8px}.cartbar .sum{font-size:14px}.cartbar .go{padding:11px 16px;font-size:16px}}
 </style>
 </head>
 <body>
@@ -198,7 +227,7 @@ table.h th{background:var(--steel-2)}
 <header class="top">
   <div class="top-in">
     <div class="logo" id="logo"><i>🔩</i><div>建築資材かんたん注文<small>サンプル建材店</small></div></div>
-    <div class="search"><input id="q" type="search" placeholder="商品名・呼び名・材質で探す(例:ビス、コーキング、ステンレス)" autocomplete="off"></div>
+    <div class="search"><input id="q" type="text" dir="ltr" enterkeyhint="search" placeholder="商品名・呼び名・材質で探す(例:ビス、杭金物)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
     <button class="hbtn" id="acct"></button>
     <button class="hbtn cartbtn" id="cartbtn">🛒 カート<span class="n" id="cn">0</span></button>
   </div>
@@ -227,6 +256,8 @@ const EDITS=readJ('kdemo2_edits',{}), ADDED=readJ('kdemo2_added',[]);
 /* デモ用のスマイル登録名の例(本番はスマイルのCSVから取り込む) */
 const SMILE_SAMPLE={'ステンコーチボルト':'SUSコーチボルト','ゴム手袋':'ゴムテブクロ(天然ゴム)','ブルーシート':'BSシート #3000'};
 function norm(s){return s.toLowerCase().replace(/[ぁ-ん]/g,c=>String.fromCharCode(c.charCodeAt(0)+96)).replace(/[！-～]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\s+/g,'')}
+function norm2(s){return norm(s).normalize('NFD').replace(/[゙゚ー・・-]/g,'').replace(/[ァィゥェォッャュョヮ]/g,c=>'アイウエオツヤユヨワ'['ァィゥェォッャュョヮ'.indexOf(c)])}
+const HAY2={},NAME2={};
 function rebuild(){
  PRODUCTS.length=0;
  BASE.forEach(b=>{const p={...b};if(p.s===undefined)p.s=SMILE_SAMPLE[p.n]||'';Object.assign(p,EDITS[p.c]||{});if(!p.del)PRODUCTS.push(p)});
@@ -235,7 +266,8 @@ function rebuild(){
  const gm={};
  PRODUCTS.forEach(p=>{
   byCode[p.c]=p;
-  HAY[p.c]=norm([p.n,p.s||'',p.a.join(' '),p.m,p.f,p.u,p.v.join(' '),p.h,p.g,p.c,(p.k||[]).join(' '),(p.sk||[]).join(' '),(p.x||[]).join(' ')].join(' '));
+  HAY[p.c]=norm([p.n,p.s||'',p.a.join(' '),p.m,p.f,p.u,p.v.join(' '),p.h,p.g,p.c,(p.k||[]).join(' '),(p.sk||[]).join(' '),(p.x||[]).join(' '),(p.sa||[]).join(' ')].join(' '));
+  HAY2[p.c]=norm2(HAY[p.c]);NAME2[p.c]=norm2([p.n,p.s||'',(p.a||[]).join(' '),(p.sa||[]).join(' ')].join(' '));
   let g=gm[p.g];if(!g){g=gm[p.g]={name:p.g,chaps:[],cm:{}};GROUPS.push(g)}
   let c=g.cm[p.h];if(!c){c=g.cm[p.h]={name:p.h,items:[]};g.chaps.push(c)}
   c.items.push(p);
@@ -293,6 +325,18 @@ window.addEventListener('popstate',e=>{
 function inCartCount(p){let n=0;for(const k in S.cart){if(k.startsWith(p.c+'|'))n++}return n}
 
 /* ---------- 検索 ---------- */
+function hit2(p,q){const ws=q.split(/s+/).filter(Boolean).map(norm2);return ws.every(w=>HAY2[p.c].includes(w))}
+function bg(t){const r=new Set();for(let i=0;i<t.length-1;i++)r.add(t.slice(i,i+2));return r}
+/* 検索: 完全一致→濁点・長音・小さい文字を無視→文字の並び順一致→2文字ずつの近さ の順にゆるめる */
+function searchAll(q){
+ let a=PRODUCTS.filter(p=>hit(p,q));if(a.length){const ws=q.split(/s+/).filter(Boolean).map(norm);const sc=p=>{const n=norm([p.n,p.s||'',(p.a||[]).join(' ')].join(' '));return ws.every(w=>n.includes(w))?0:1};return{list:a.map((p,i)=>[p,sc(p),i]).sort((x,y)=>x[1]-y[1]||x[2]-y[2]).map(x=>x[0]),lv:0}}
+ a=PRODUCTS.filter(p=>hit2(p,q));if(a.length)return{list:a,lv:1};
+ const t=norm2(q);if(!t)return{list:[],lv:0};
+ a=PRODUCTS.filter(p=>{let i=0;const h=NAME2[p.c];for(const ch of t){i=h.indexOf(ch,i);if(i<0)return false;i++}return true});if(a.length)return{list:a,lv:2};
+ const qb=bg(t);if(!qb.size)return{list:[],lv:0};
+ const sc=PRODUCTS.map(p=>{const hb=bg(HAY2[p.c]);let c=0;qb.forEach(x=>{if(hb.has(x))c++});return[p,c/qb.size]}).filter(x=>x[1]>=0.5).sort((x,y)=>y[1]-x[1]);
+ return{list:sc.map(x=>x[0]),lv:3};
+}
 function hit(p,q){const ws=q.split(/\s+/).filter(Boolean).map(norm);return ws.every(w=>HAY[p.c].includes(w))}
 
 /* ---------- 画面切替 ---------- */
@@ -364,8 +408,8 @@ function vChap(){
  return `${staffNote()}<div class="crumb"><a data-act="home">🏠 トップ</a> › <span>${esc(g.name)}</span> › <b>${esc(c.name)}</b></div>${chapTabs()}<div class="pgrid">${c.items.map(prodCard).join('')}</div>`;
 }
 function vSearch(){
- const all=PRODUCTS.filter(p=>hit(p,S.q));const list=all.slice(0,S.limit);
- $('#app').innerHTML=`${staffNote()}<div class="crumb"><a data-act="home">🏠 トップ</a> › <b>「${esc(S.q)}」の検索結果 ${all.length}件</b></div>${all.length?`<div class="pgrid">${list.map(prodCard).join('')}</div>${all.length>list.length?`<div class="more"><button class="ghost" data-act="more">さらに表示(残り${all.length-list.length}件)</button></div>`:''}`:`<div class="empty">見つかりませんでした。<br>別の呼び名でも探してみてください。<br><small>(本番では「見つからないとき連絡する」ボタンも付けられます)</small></div>`}`;
+ const R=searchAll(S.q);const all=R.list;const list=all.slice(0,S.limit);
+ $('#app').innerHTML=`${staffNote()}<div class="crumb"><a data-act="home">🏠 トップ</a> › <b>「${esc(S.q)}」の検索結果 ${all.length}件</b>${R.lv&&all.length?' <span style="color:var(--sub);font-size:13px">(ぴったりは無かったので、近い候補を表示しています)</span>':''}</div>${all.length?`<div class="pgrid">${list.map(prodCard).join('')}</div>${all.length>list.length?`<div class="more"><button class="ghost" data-act="more">さらに表示(残り${all.length-list.length}件)</button></div>`:''}`:`<div class="empty">見つかりませんでした。<br>別の呼び名でも探してみてください。<br><small>(本番では「見つからないとき連絡する」ボタンも付けられます)</small></div>`}`;
  return $('#app').innerHTML;
 }
 
@@ -897,7 +941,12 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='g_co'){const b=document.querySelector('[data-act=gatecheck]');if(b)b.click()}});
 let qT=null;
-$('#q').addEventListener('input',e=>{const was=S.q.trim();S.q=e.target.value;if(!was&&S.q.trim())pushPage();S.limit=24;clearTimeout(qT);qT=setTimeout(render,250)});
+let composing=false;
+$('#q').addEventListener('compositionstart',()=>{composing=true;clearTimeout(qT)});
+$('#q').addEventListener('compositionend',e=>{composing=false;doSearch(e.target.value)});
+function doSearch(v){const was=S.q.trim();S.q=v;S.limit=24;clearTimeout(qT);qT=setTimeout(()=>{if(composing)return;if(!was&&S.q.trim())pushPage();render()},400)}
+/* 入力中(変換中)は画面を作り直さない・入力欄の値に触らない=スマホ縦で文字順が逆転する不具合の対策 */
+$('#q').addEventListener('input',e=>{if(e.isComposing||composing){S.q=e.target.value;return}doSearch(e.target.value)});
 $('#logo').onclick=()=>{S.q='';$('#q').value='';go('home')};
 $('#cartbtn').onclick=openCart;
 $('#gocheck').onclick=()=>{S.ck=null;go(S.mode==='counter'?'confirm':'checkout')};
