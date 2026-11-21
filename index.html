@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>建築資材かんたん注文 デモ</title>
+<title>ヨシカワ建築資材注文</title>
 <style>
 :root{
   --green:#8ac243; --green-d:#5b9a1a; --green-l:#eef7dc; --green-ink:#14230a;
@@ -27,6 +27,8 @@ img{display:block}
 header.top{background:#c9ced5 var(--hair);color:var(--steel-d);position:sticky;top:0;z-index:20;box-shadow:0 2px 6px #0003;border-bottom:3px solid var(--green)}
 .top-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:9px 14px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;white-space:nowrap;cursor:pointer;line-height:1.15;text-shadow:0 1px 0 #fff8}
+.lmark{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 1px 3px #0005}
+.lkana{height:20px;width:auto;display:inline-block;vertical-align:-3px;margin-right:3px}
 .logo i{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff 0,#e3e7ec 30%,#9ca3ad 100%);font-style:normal;font-size:20px;box-shadow:0 1px 3px #0005, inset 0 0 0 3px var(--green)}
 .logo small{display:block;font-size:11px;font-weight:600;color:var(--steel-m)}
 .search{flex:1;position:relative;min-width:0}
@@ -191,7 +193,8 @@ table.h th{background:var(--steel-2)}
  .demo-bar button{padding:4px 9px;font-size:11px}
  .top-in{flex-wrap:wrap;gap:6px 8px;padding:7px 10px}
  .logo{order:1;flex:1 1 0;min-width:0;font-size:14px;gap:7px;white-space:normal}
- .logo i{width:32px;height:32px;font-size:16px;flex:none}
+ .lmark{width:34px;height:34px}.lkana{height:15px;vertical-align:-2px}
+ #histbtn{order:2;padding:7px 9px;font-size:12px}
  .logo small{font-size:10px}
  #acct{order:2;padding:7px 9px;font-size:12px;max-width:44vw;overflow:hidden;text-overflow:ellipsis}
  .cartbtn{order:3;padding:7px 10px;font-size:13px;margin-right:6px}
@@ -215,21 +218,22 @@ table.h th{background:var(--steel-2)}
 /* PC(広い画面): 左右の余白を使い、ホームを1画面に収める(上3つ・下2つの大分類、章ボタンは3列。ボタンの形は元のまま) */
 @media(min-width:1000px){
  .top-in,main{max-width:none}
- main{padding:8px 20px 80px}
+ main{padding:8px 20px 24px}
  .groups+p{margin-top:8px!important}
  .hero{padding:8px 18px;margin-bottom:10px;gap:12px}
  .hero h2{font-size:19px;margin:0}.hero p{font-size:13px}
  .steps span{padding:5px 10px;font-size:13px}
  .banner{padding:8px 12px;margin-bottom:10px}
- .groups{grid-template-columns:repeat(6,1fr);gap:10px;align-items:start}
- .groups .grp{grid-column:span 2}
- .groups .grp:nth-child(4){grid-column:span 4}
- .groups .grp:nth-child(5){grid-column:span 2}
- .groups .grp:nth-child(4) .chaps{grid-template-columns:repeat(4,1fr)}
- .groups .grp:nth-child(5) .chaps{grid-template-columns:repeat(2,1fr)}
+ .groups{grid-template-columns:repeat(9,1fr);gap:10px;align-items:start;--rh:clamp(60px,calc((100vh - 330px)/8 - 6px),100px)}
+ .groups .grp{grid-column:span 3}
+ .groups .grp:nth-child(4){grid-column:span 5}
+ .groups .grp:nth-child(5){grid-column:span 4}
  .grp .bar{padding:6px 10px}
- .chaps{padding:8px;gap:6px;grid-template-columns:repeat(3,1fr)}
- .chap{min-height:0;padding:4px 8px}
+ .groups .grp .chaps{padding:8px;gap:6px;grid-template-columns:repeat(3,1fr)}
+ .groups .grp:nth-child(4) .chaps{grid-template-columns:repeat(5,1fr)}
+ .groups .grp:nth-child(5) .chaps{grid-template-columns:repeat(4,1fr)}
+ .chap{height:var(--rh);min-height:0;padding:4px 8px}
+ .chap img{width:calc(var(--rh) - 10px);height:calc(var(--rh) - 10px)}
 }
 @media(max-width:640px){.cartbar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}.cartbar-in{gap:8px}.cartbar .sum{font-size:14px}.cartbar .go{padding:11px 16px;font-size:16px}}
 </style>
@@ -246,8 +250,9 @@ table.h th{background:var(--steel-2)}
 
 <header class="top">
   <div class="top-in">
-    <div class="logo" id="logo"><i>🔩</i><div>建築資材かんたん注文<small>サンプル建材店</small></div></div>
+    <div class="logo" id="logo"><img class="lmark" src="img/yk_mark.png" alt=""><div><img class="lkana" src="img/yk_kana.png" alt="ヨシカワ">建築資材注文</div></div>
     <div class="search"><input id="q" type="text" dir="ltr" enterkeyhint="search" placeholder="商品名・呼び名・材質で探す(例:ビス、杭金物)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+    <button class="hbtn" id="histbtn" data-act="history">📋 注文履歴</button>
     <button class="hbtn" id="acct"></button>
     <button class="hbtn cartbtn" id="cartbtn">🛒 カート<span class="n" id="cn">0</span></button>
   </div>
@@ -367,6 +372,7 @@ function render(){
  document.body.className=S.mode;
  document.querySelectorAll('.demo-bar [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===S.mode));
  const a=$('#acct');
+ $('#histbtn').style.display=S.mode==='counter'?'none':'';
  if(S.mode==='counter')a.style.display='none';
  else{a.style.display='';a.textContent=S.mode==='staff'?'☎️ 社員:'+S.staff+' ▾':(S.user?('👤 '+S.user.name.split(' ')[0]+' 様'):'👤 ログイン')}
  updateChrome();
@@ -397,7 +403,6 @@ function vHome(){
    g.chaps.map(c=>`<button class="chap" data-act="chap" data-g="${esc(g.name)}" data-h="${esc(c.name)}">${chapImg(c)}<span>${esc(c.name)}<small>${c.items.length}商品</small></span></button>`).join('')+`</div></section>`;
  });
  h+=`</div>`;
- if(S.mode!=='counter')h+=`<p style="margin-top:22px"><button class="ghost" data-act="history">📋 注文履歴を見る</button></p>`;
  return h;
 }
 
