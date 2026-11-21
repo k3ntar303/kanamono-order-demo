@@ -212,31 +212,24 @@ table.h th{background:var(--steel-2)}
  .prod .foot{flex-wrap:wrap}
 }
 
-/* PC(広い画面): 左右の余白を使い、ホームを1画面に収める */
+/* PC(広い画面): 左右の余白を使い、ホームを1画面に収める(上3つ・下2つの大分類、章ボタンは3列。ボタンの形は元のまま) */
 @media(min-width:1000px){
  .top-in,main{max-width:none}
- main{padding:12px 20px 90px}
- .hero{padding:10px 18px;margin-bottom:10px;gap:12px}
+ main{padding:8px 20px 80px}
+ .groups+p{margin-top:8px!important}
+ .hero{padding:8px 18px;margin-bottom:10px;gap:12px}
  .hero h2{font-size:19px;margin:0}.hero p{font-size:13px}
  .steps span{padding:5px 10px;font-size:13px}
  .banner{padding:8px 12px;margin-bottom:10px}
- .groups{grid-template-columns:repeat(3,1fr);gap:10px;align-items:start}
- .grp .bar{font-size:15px;padding:6px}
- .chaps{padding:8px;gap:5px;grid-template-columns:1fr 1fr}
- .chap{min-height:0;padding:4px 6px;gap:8px;font-size:13px}
- .chap img{width:32px;height:32px;border-radius:6px}
- .chap small{display:inline;margin-left:6px;font-size:11px}
-}
-@media(min-width:1500px){
- .groups{grid-template-columns:repeat(5,1fr)}
- .groups .grp:nth-child(1){grid-column:1;grid-row:1}
- .groups .grp:nth-child(3){grid-column:1;grid-row:2}
- .groups .grp:nth-child(2){grid-column:2;grid-row:1/3}
- .groups .grp:nth-child(5){grid-column:3;grid-row:1/3}
- .groups .grp:nth-child(4){grid-column:4/6;grid-row:1/3}
- .groups .grp:nth-child(1) .chaps,.groups .grp:nth-child(2) .chaps,.groups .grp:nth-child(3) .chaps,.groups .grp:nth-child(5) .chaps{grid-template-columns:1fr}
- .groups .grp:nth-child(4) .chaps{grid-template-columns:1fr 1fr}
- .chaps{gap:6px}.chap{padding:5px 8px;font-size:14px}.chap img{width:38px;height:38px}.grp .bar{font-size:17px;padding:8px}
+ .groups{grid-template-columns:repeat(6,1fr);gap:10px;align-items:start}
+ .groups .grp{grid-column:span 2}
+ .groups .grp:nth-child(4){grid-column:span 4}
+ .groups .grp:nth-child(5){grid-column:span 2}
+ .groups .grp:nth-child(4) .chaps{grid-template-columns:repeat(4,1fr)}
+ .groups .grp:nth-child(5) .chaps{grid-template-columns:repeat(2,1fr)}
+ .grp .bar{padding:6px 10px}
+ .chaps{padding:8px;gap:6px;grid-template-columns:repeat(3,1fr)}
+ .chap{min-height:0;padding:4px 8px}
 }
 @media(max-width:640px){.cartbar{padding:8px 10px calc(8px + env(safe-area-inset-bottom))}.cartbar-in{gap:8px}.cartbar .sum{font-size:14px}.cartbar .go{padding:11px 16px;font-size:16px}}
 </style>
